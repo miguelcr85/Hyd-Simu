@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        
+        <!-- ── Core Meta ─────────────────────────────────────────── -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="index, follow"/>
+        <meta name="google-adsense-account" content="ca-pub-8475334350760145"/>
+        <!-- Google AdSense -->
+        
+                <!-- ── Open Graph (7 tags) ──────────────────────────────── -->
+        
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <!-- ── Twitter Card (4 tags) ────────────────────────────── -->
+        
+        <!-- ── PWA & Theme ───────────────────────────────────────── -->
+        <meta name="theme-color" content="#0d1117">
+        
+        <link rel="stylesheet" href="css/styles.css">
+        <!-- ── Schema 1: LearningResource + SoftwareApplication ──── -->
+    </head>
+    <body>
+        
+        <main id="app">
+            
+            <header>
+                <h1>Hydraulic Circuit Simulator</h1>
+                <p class="subtitle">Drag &amp;Drop &bull;ISO 1219 Symbols </p>
+            </header>
+            <!-- Mode tabs -->
+            <div class="controls-bar">
+                <div class="ctrl-group">
+                    <span class="ctrl-label">Mode</span>
+                    <div class="pill-tabs" id="mode-tabs">
+                        <button class="pill active" data-mode="simulate">Simulate</button>
+                        <button class="pill" data-mode="explore">Explore</button>
+                        <button class="pill" data-mode="practice">Practice</button>
+                        <button class="pill" data-mode="quiz">Quiz</button>
+                    </div>
+                </div>
+                <div class="ctrl-group" id="unit-bar" style="margin-left:auto;">
+                    <span class="ctrl-label">Units</span>
+                    <div class="pill-tabs" id="unit-tabs">
+                        <button class="pill active" data-units="si" type="button">SI</button>
+                        <button class="pill" data-units="imp" type="button">Imperial</button>
+                    </div>
+                </div>
+                <a class="btn-guide" href="#user-guide" id="btn-guide" style="padding:6px 16px;border:none;border-radius:8px;cursor:pointer;font-size:0.82rem;font-weight:700;background:#f5c842;color:#1a1a2e;text-decoration:none;transition:filter .18s;">&#128214;User Guide</a>
+            </div>
+            <!-- ═══ Simulate panel ══════════════════════════════════════ -->
+            <div id="sim-panel">
+                <!-- Pre-built circuits -->
+                <div class="controls-bar" id="prebuilt-bar">
+                    <span class="ctrl-label">Pre-Built Circuits</span>
+                    <div class="pill-tabs" id="prebuilt-tabs">
+                        <button class="pill" data-circuit="meter-in">Meter-In</button>
+                        <button class="pill" data-circuit="meter-out">Meter-Out</button>
+                        <button class="pill" data-circuit="regenerative">Regenerative</button>
+                        <button class="pill" data-circuit="sequence">Sequence</button>
+                        <button class="pill" data-circuit="bleed-off">Bleed-Off</button>
+                        <button class="pill" data-circuit="counterbalance-circuit">Counterbalance</button>
+                        <button class="pill" data-circuit="safety-circuit">Safety</button>
+                        <button class="pill" data-circuit="priority-circuit">Priority</button>
+                        <button class="pill" data-circuit="sync-cylinders">Sync Cylinders</button>
+                        <button class="pill" data-circuit="precision-speed">Precision Speed</button>
+                    </div>
+                </div>
+                <!-- Circuit description -->
+                <div class="circuit-desc" id="circuit-desc" style="display:none;"></div>
+                <!-- Component palette + canvas -->
+                <div class="builder-layout">
+                    <aside class="component-palette" id="palette">
+                        <div class="palette-title">Components</div>
+                        <!-- ── Supply & Reservoir ── -->
+                        <div class="palette-cat" data-cat="supply">
+                            Supply &amp;Reservoir <span class="cat-arrow">▼</span>
+                        </div>
+                        <div class="palette-cat-items" data-cat="supply">
+                            <div class="palette-item" data-type="pump" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Power Unit</span>
+                            </div>
+                            <div class="palette-item" data-type="pump-var" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Variable Pump</span>
+                            </div>
+                            <div class="palette-item" data-type="reservoir" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Reservoir</span>
+                            </div>
+                            <div class="palette-item" data-type="accumulator" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Accumulator</span>
+                            </div>
+                            <div class="palette-item" data-type="intensifier" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Intensifier</span>
+                            </div>
+                            <div class="palette-item" data-type="pump-hand" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Hand Pump</span>
+                            </div>
+                            <!-- En la sección de componentes de la paleta, agregar: -->
+                            <div class="palette-item" draggable="true" data-type="engine">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span class="palette-label">Motor</span>
+                            </div>
+                            <!-- En la paleta de componentes, agregar: -->
+                            <div class="palette-item" draggable="true" data-type="pump-drive">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span class="palette-label">Pump Drive</span>
+                            </div>
+                            <div class="palette-item" draggable="true" data-type="pump-var-displacement">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span class="palette-label">Bomba Variable</span>
+                            </div>
+                        </div>
+                        <!-- ── Oil Conditioning ── -->
+                        <div class="palette-cat" data-cat="conditioning">
+                            Oil Conditioning <span class="cat-arrow">▼</span>
+                        </div>
+                        <div class="palette-cat-items" data-cat="conditioning">
+                            <div class="palette-item" data-type="filter" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Filter</span>
+                            </div>
+                            <div class="palette-item" data-type="cooler" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Oil Cooler</span>
+                            </div>
+                            <div class="palette-item" data-type="heater" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Oil Heater</span>
+                            </div>
+                        </div>
+                        <!-- ── Directional Valves ── -->
+                        <div class="palette-cat" data-cat="dcv">
+                            Directional Valves <span class="cat-arrow">▼</span>
+                        </div>
+                        <div class="palette-cat-items" data-cat="dcv">
+                            <div class="palette-subcat">Standard</div>
+                            <div class="palette-item" data-type="dcv43" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>DCV 4/3</span>
+                            </div>
+                            <div class="palette-item" data-type="dcv42" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>DCV 4/2</span>
+                            </div>
+                            <div class="palette-item" data-type="dcv32" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>DCV 3/2</span>
+                            </div>
+                            <div class="palette-item" data-type="valve22" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>2/2 Way Valve</span>
+                            </div>
+                            <div class="palette-item" data-type="dcv52" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>DCV 5/2</span>
+                            </div>
+                            <div class="palette-item" data-type="dcv53" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>DCV 5/3</span>
+                            </div>
+                            <div class="palette-item" data-type="dcv32no" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>DCV 3/2 NO</span>
+                            </div>
+                            <div class="palette-item" data-type="valve22no" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>2/2 NO Valve</span>
+                            </div>
+                            <div class="palette-subcat">Proportional</div>
+                            <div class="palette-item" data-type="prop-dcv" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Prop. DCV 4/3</span>
+                            </div>
+                        </div>
+                        <!-- ── Flow Control ── -->
+                        <div class="palette-cat" data-cat="flow">
+                            Flow Control <span class="cat-arrow">▼</span>
+                        </div>
+                        <div class="palette-cat-items" data-cat="flow">
+                            <div class="palette-item" data-type="flow-control" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Flow Control</span>
+                            </div>
+                            <div class="palette-item" data-type="flow-comp" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Pressure-Comp FC</span>
+                            </div>
+                            <div class="palette-item" data-type="throttle" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Throttle Valve</span>
+                            </div>
+                            <div class="palette-item" data-type="orifice" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Fixed Orifice</span>
+                            </div>
+                            <div class="palette-item" data-type="flow-check" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Flow Ctrl+Check</span>
+                            </div>
+                            <div class="palette-item" data-type="prop-flow" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Prop. Flow Ctrl</span>
+                            </div>
+                        </div>
+                        <!-- ── Pressure Control ── -->
+                        <div class="palette-cat" data-cat="pressure">
+                            Pressure Control <span class="cat-arrow">▼</span>
+                        </div>
+                        <div class="palette-cat-items" data-cat="pressure">
+                            <div class="palette-item" data-type="relief" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Relief Valve</span>
+                            </div>
+                            <div class="palette-item" data-type="prop-relief" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Prop. Relief</span>
+                            </div>
+                            <div class="palette-item" data-type="pressure-reducing" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Pressure Reducing</span>
+                            </div>
+                            <div class="palette-item" data-type="sequence-valve" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Sequence Valve</span>
+                            </div>
+                            <div class="palette-item" data-type="counterbalance" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Counterbalance</span>
+                            </div>
+                            <div class="palette-item" data-type="unloading" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Unloading Valve</span>
+                            </div>
+                            <div class="palette-item" data-type="priority" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Priority Valve</span>
+                            </div>
+                            <div class="palette-item" data-type="flow-divider" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Flow Divider</span>
+                            </div>
+                        </div>
+                        <!-- ── Logic Valves ── -->
+                        <div class="palette-cat" data-cat="logic">
+                            Logic Valves <span class="cat-arrow">▼</span>
+                        </div>
+                        <div class="palette-cat-items" data-cat="logic">
+                            <div class="palette-item" data-type="check" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Check Valve</span>
+                            </div>
+                            <div class="palette-item" data-type="check-spring" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Spring Check</span>
+                            </div>
+                            <div class="palette-item" data-type="pilot-check" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Pilot Check</span>
+                            </div>
+                            <div class="palette-item" data-type="shuttle" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Shuttle (OR)</span>
+                            </div>
+                            <div class="palette-item" data-type="and-valve" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>AND Valve</span>
+                            </div>
+                        </div>
+                        <!-- ── Actuators ── -->
+                        <div class="palette-cat" data-cat="actuators">
+                            Actuators <span class="cat-arrow">▼</span>
+                        </div>
+                        <div class="palette-cat-items" data-cat="actuators">
+                            <div class="palette-subcat">Linear</div>
+                            <div class="palette-item" data-type="cylinder-sa" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Single-Act Cyl</span>
+                            </div>
+                            <div class="palette-item" data-type="cylinder-da" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Double-Act Cyl</span>
+                            </div>
+                            <div class="palette-item" data-type="cylinder-telescopic" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Telescopic Cyl</span>
+                            </div>
+                            <div class="palette-subcat">Rotary</div>
+                            <div class="palette-item" data-type="rotary-act" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Rotary Actuator</span>
+                            </div>
+                            <div class="palette-item" draggable="true" data-type="poclain-ms35">
+                                  <canvas class="palette-icon" width="40" height="40"></canvas>
+                                    <div>Poclain MS35</div>
+                          
+                            </div>
+                            <div class="palette-item" data-type="motor" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Hyd Motor</span>
+                            </div>
+                            <div class="palette-item" data-type="motor-bidir" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Bi-Dir. Motor</span>
+                            </div>
+                        </div>
+                        <!-- ── Measurement & Sensors ── -->
+                        <div class="palette-cat" data-cat="measurement">
+                            Measurement &amp;Sensors <span class="cat-arrow">▼</span>
+                        </div>
+                        <div class="palette-cat-items" data-cat="measurement">
+                            <div class="palette-item" data-type="gauge" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Pressure Gauge</span>
+                            </div>
+                            <div class="palette-item" data-type="flow-meter" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Flow Meter</span>
+                            </div>
+                            <div class="palette-item" data-type="temp-gauge" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Temperature Gauge</span>
+                            </div>
+                            <div class="palette-item" data-type="pressure-switch" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Pressure Switch</span>
+                            </div>
+                            <div class="palette-item" data-type="pressure-transducer" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>P Transducer</span>
+                            </div>
+                            <div class="palette-item" data-type="limit-switch-hyd" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>Limit Switch</span>
+                            </div>
+                        </div>
+                        <!-- ── Accessories ── -->
+                        <div class="palette-cat" data-cat="util">
+                            Accessories <span class="cat-arrow">▼</span>
+                        </div>
+                        <div class="palette-cat-items" data-cat="util">
+                            <div class="palette-item" data-type="tee" draggable="true">
+                                <canvas class="palette-icon" width="40" height="40"></canvas>
+                                <span>T-Connector</span>
+                            </div>
+                        </div>
+                    </aside>
+                    <div class="canvas-area">
+                        <div class="canvas-card">
+                            <!-- Annotation mark-bar -->
+                            <div id="mark-bar" class="mark-bar">
+                                <button class="tool-btn active" data-tool="move" title="Move / Select">✥</button>
+                                <div class="tool-btn-group">
+                                    <button class="tool-btn tool-btn-sketch" data-tool="sketch" title="Freehand Sketch">&#9998;</button>
+                                    <button class="tool-btn tool-btn-drop" id="sketch-drop-toggle" title="Sketch options">&#9662;</button>
+                                </div>
+                                <div id="sketch-dropdown" class="sketch-dropdown" style="display:none;">
+                                    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">
+                                        <span class="swatch active" data-color="#ffffff" style="background:#ffffff"></span>
+                                        <span class="swatch" data-color="#ff5555" style="background:#ff5555"></span>
+                                        <span class="swatch" data-color="#50fa7b" style="background:#50fa7b"></span>
+                                        <span class="swatch" data-color="#f1fa8c" style="background:#f1fa8c"></span>
+                                        <span class="swatch" data-color="#8be9fd" style="background:#8be9fd"></span>
+                                        <span class="swatch" data-color="#bd93f9" style="background:#bd93f9"></span>
+                                        <span class="swatch" data-color="#ff79c6" style="background:#ff79c6"></span>
+                                        <span class="swatch" data-color="#ffb86c" style="background:#ffb86c"></span>
+                                    </div>
+                                    <div style="display:flex;gap:4px;">
+                                        <button class="width-btn" data-width="1">1</button>
+                                        <button class="width-btn active" data-width="2">2</button>
+                                        <button class="width-btn" data-width="4">4</button>
+                                        <button class="width-btn" data-width="8">8</button>
+                                    </div>
+                                </div>
+                                <div class="tool-btn-group">
+                                    <button class="tool-btn tool-btn-shape" data-tool="shape" title="Draw Shape">
+                                        <span id="shape-icon">&#9645;</span>
+                                    </button>
+                                    <button class="tool-btn tool-btn-drop" id="shape-drop-toggle" title="Shape options">&#9662;</button>
+                                </div>
+                                <div id="shape-dropdown" class="shape-dropdown" style="display:none;">
+                                    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">
+                                        <button class="shape-pick active" data-shape="rect">&#9645;</button>
+                                        <button class="shape-pick" data-shape="circle">&#9711;</button>
+                                        <button class="shape-pick" data-shape="ellipse">&#11053;</button>
+                                        <button class="shape-pick" data-shape="arrow">&#10148;</button>
+                                        <button class="shape-pick" data-shape="line">&#9585;</button>
+                                        <button class="shape-pick" data-shape="dblarrow">&#10231;</button>
+                                        <button class="shape-pick" data-shape="text">T</button>
+                                    </div>
+                                    <div class="shape-colors" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">
+                                        <span class="swatch active" data-color="#ffffff" style="background:#ffffff"></span>
+                                        <span class="swatch" data-color="#ff5555" style="background:#ff5555"></span>
+                                        <span class="swatch" data-color="#50fa7b" style="background:#50fa7b"></span>
+                                        <span class="swatch" data-color="#f1fa8c" style="background:#f1fa8c"></span>
+                                        <span class="swatch" data-color="#8be9fd" style="background:#8be9fd"></span>
+                                        <span class="swatch" data-color="#bd93f9" style="background:#bd93f9"></span>
+                                        <span class="swatch" data-color="#ff79c6" style="background:#ff79c6"></span>
+                                        <span class="swatch" data-color="#ffb86c" style="background:#ffb86c"></span>
+                                    </div>
+                                    <div class="shape-widths" style="display:flex;gap:4px;margin-bottom:6px;">
+                                        <button class="width-btn" data-width="1">1</button>
+                                        <button class="width-btn active" data-width="2">2</button>
+                                        <button class="width-btn" data-width="4">4</button>
+                                        <button class="width-btn" data-width="8">8</button>
+                                    </div>
+                                    <div style="display:flex;gap:4px;">
+                                        <button class="fill-btn active" data-fill="false">Outline</button>
+                                        <button class="fill-btn" data-fill="true">Filled</button>
+                                    </div>
+                                </div>
+                                <button class="tool-btn tool-btn-action" id="btn-clear-annotations" title="Clear annotations">🧹</button>
+                                <button class="tool-btn" id="btn-toggle-annotations" title="Toggle Annotations">👁</button>
+                                <button id="btn-toggle-labels" class="tool-btn active" title="Mostrar etiquetas de presión y flujo">🏷️</button>
+                            </div>
+                            <div class="canvas-scroll-wrap">
+                                <canvas id="sim-canvas" role="img" aria-label="Interactive hydraulic circuit builder canvas"></canvas>
+                            </div>
+                            <input type="text" id="shape-text-input" class="shape-text-input" style="display:none;" placeholder="Type label..." maxlength="80">
+                            <!-- Canvas overlay buttons (export PNG) -->
+                            <div class="canvas-overlay-btns">
+                                <button class="canvas-overlay-btn" id="canvas-export-btn" title="Export as PNG">&#128190;</button>
+                            </div>
+                            <!-- Zoom / Pan toolbar -->
+                            <div class="graph-toolbar">
+                                <button class="tb-btn" id="btn-zoom-in" title="Zoom In (Ctrl +)" aria-label="Zoom in">+</button>
+                                <button class="tb-btn" id="btn-zoom-out" title="Zoom Out (Ctrl −)" aria-label="Zoom out">&minus;</button>
+                                <button class="tb-btn" id="btn-pan-toggle" title="Pan Mode (H) · Right-click canvas · Esc to exit" aria-label="Toggle pan mode">✋</button>
+                                <button class="tb-btn" id="btn-zoom-reset" title="Reset View (Ctrl 0)" aria-label="Reset zoom and pan">&#8634;</button>
+                                <button class="tb-btn" id="btn-zoom-fit" title="Fit All (Ctrl 1)" aria-label="Fit all components in view">&#9724;</button>
+                            </div>
+                            <!-- Fullscreen button -->
+                            <button class="fullscreen-btn" id="btn-fullscreen" title="Fullscreen (F11)" aria-label="Toggle fullscreen">⛶</button>
+                        </div>
+                        <!-- Clear annotations confirm dialog -->
+                        <div id="clear-ann-confirm" class="confirm-overlay" style="display:none;">
+                            <div class="confirm-dialog">
+                                <h4 style="margin:0 0 8px;">Clear Annotations</h4>
+                                <select id="clear-ann-category" style="width:100%;padding:6px;margin-bottom:6px;border-radius:4px;border:1px solid #2a3a5a;background:#0d1117;color:#c0d0e8;">
+                                    <option value="all">All annotations</option>
+                                    <option value="sketches">Sketches only</option>
+                                    <option value="shapes">Shapes &amp;text only</option>
+                                </select>
+                                <p id="clear-ann-hint" style="font-size:0.8rem;color:#8899bb;margin:0 0 10px;">Removes all sketches, shapes, and text annotations.</p>
+                                <div style="display:flex;gap:8px;justify-content:flex-end;">
+                                    <button class="btn btn-ghost" id="clear-ann-no">Cancel</button>
+                                    <button class="btn btn-primary" id="clear-ann-yes">Clear</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Toolbar -->
+                        <div class="canvas-toolbar">
+                            <button class="btn btn-primary" id="btn-run" aria-label="Run circuit simulation">&#9654;Run Circuit</button>
+                            <button class="btn btn-ghost" id="btn-stop" style="display:none;" aria-label="Stop simulation">&#9632;Stop</button>
+                            <button class="btn btn-ghost" id="btn-clear" aria-label="Clear canvas">&#10005;Clear</button>
+                            <button class="btn btn-ghost" id="btn-delete" aria-label="Delete selected component">&#128465;Delete</button>
+                            <button class="btn btn-ghost" id="btn-rotate" aria-label="Rotate selected component 90 degrees">&#8635;Rotate</button>
+                            <button class="btn btn-ghost" id="btn-undo" aria-label="Undo last action" title="Undo (Ctrl+Z)">&#8630;Undo</button>
+                            <button class="btn btn-ghost" id="btn-redo" aria-label="Redo last action" title="Redo (Ctrl+Shift+Z)">&#8631;Redo</button>
+                            <span class="toolbar-divider" aria-hidden="true"></span>
+                            <button class="btn btn-ghost" id="btn-save" title="Save circuit to browser storage" aria-label="Save circuit to browser storage">&#128190;Save</button>
+                            <button class="btn btn-ghost" id="btn-load" title="Load saved circuit from browser storage" aria-label="Load saved circuit">&#128194;Load</button>
+                            <button class="btn btn-ghost" id="btn-export-json" title="Export circuit as JSON file" aria-label="Export circuit as JSON file">&#8595;Export</button>
+                            <button class="btn btn-ghost" id="btn-import-json" title="Import circuit from JSON file" aria-label="Import circuit from JSON file">&#8593;Import</button>
+                            <input type="file" id="import-json-input" accept="application/json,.json" style="display:none;" aria-hidden="true">
+                            <span class="toolbar-hint" id="toolbar-hint">Click a component to add it, then drag to position. Click ports to connect.</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Custom right-click context menu -->
+                <div id="ctx-menu" style="display:none;position:fixed;z-index:999;background:#151c2c;border:1px solid #2a3a5a;border-radius:6px;padding:4px 0;min-width:160px;box-shadow:0 6px 20px rgba(0,0,0,.5);font-size:0.82rem;">
+                    <div class="ctx-item" id="ctx-info" style="padding:7px 14px;color:#c0d0e8;cursor:pointer;">&#9432;Info</div>
+                    <div class="ctx-item" id="ctx-duplicate" style="padding:7px 14px;color:#c0d0e8;cursor:pointer;">&#10697;Duplicate</div>
+                    <div class="ctx-item" id="ctx-rotate" style="padding:7px 14px;color:#c0d0e8;cursor:pointer;">&#8635;Rotate 90 &deg;</div>
+                    <div style="height:1px;background:#2a3a5a;margin:3px 0;"></div>
+                    <div class="ctx-item" id="ctx-delete" style="padding:7px 14px;color:#ff6666;cursor:pointer;">&#128465;Delete</div>
+                </div>
+                <!-- Connection right-click context menu -->
+                <div id="ctx-conn-menu" style="display:none;position:fixed;z-index:999;background:#151c2c;border:1px solid #2a3a5a;border-radius:6px;padding:4px 0;min-width:160px;box-shadow:0 6px 20px rgba(0,0,0,.5);font-size:0.82rem;">
+                    <div class="ctx-item" id="ctx-conn-delete" style="padding:7px 14px;color:#ff6666;cursor:pointer;">&#128465;Delete Connection</div>
+                    <div class="ctx-item" id="ctx-conn-clear-wp" style="padding:7px 14px;color:#00bcd4;cursor:pointer;">&#8634;Reset to Auto-Route</div>
+                </div>
+                <!-- Properties panel -->
+                <div class="properties-panel" id="props-panel" style="display:none;">
+                    <div class="props-title">Component Properties</div>
+                    <div class="props-body" id="props-body"></div>
+                </div>
+                <!-- ═══ Component guide: description + design formulas (education) ═══ -->
+                <div class="edu-panel" id="edu-panel" style="display:none;">
+                    <div class="edu-title">
+                        <span>&#128218; Component guide</span>
+                        <button class="edu-close" id="edu-close" type="button" title="Hide this panel">&#10005;</button>
+                    </div>
+                    <div class="edu-body" id="edu-body"></div>
+                </div>
+                <!-- Readouts when running -->
+                <div class="readout-row" id="sim-readouts" style="display:none;">
+                    <div class="readout-card">
+                        <div class="readout-label">System Pressure</div>
+                        <div>
+                            <span class="readout-val" id="r-pressure">0</span>
+                            <span class="readout-unit" id="u-pressure">bar</span>
+                        </div>
+                    </div>
+                    <div class="readout-card">
+                        <div class="readout-label">Flow Rate</div>
+                        <div>
+                            <span class="readout-val" id="r-flow">0</span>
+                            <span class="readout-unit" id="u-flow">L/min</span>
+                        </div>
+                    </div>
+                    <div class="readout-card">
+                        <div class="readout-label">Pump Power</div>
+                        <div>
+                            <span class="readout-val" id="r-power">0</span>
+                            <span class="readout-unit" id="u-power">kW</span>
+                        </div>
+                    </div>
+                    <div class="readout-card">
+                        <div class="readout-label">Cylinder Force</div>
+                        <div>
+                            <span class="readout-val" id="r-force">0</span>
+                            <span class="readout-unit" id="u-force">kN</span>
+                        </div>
+                    </div>
+                    <div class="readout-card">
+                        <div class="readout-label">Cylinder Speed</div>
+                        <div>
+                            <span class="readout-val" id="r-speed">0</span>
+                            <span class="readout-unit" id="u-speed">mm/s</span>
+                        </div>
+                    </div>
+                    <div class="readout-card">
+                        <div class="readout-label">Status</div>
+                        <div>
+                            <span class="readout-val" id="r-status">Idle</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Warnings -->
+                <div class="warning-bar" id="warning-bar" style="display:none;"></div>
+                <!-- ═══ Diagnostics + Fault Injection + Oscilloscope ═══════════ -->
+                <div class="hc-advanced" id="hc-advanced">
+                    <!-- Diagnostics -->
+                    <details class="hc-adv-card" id="hc-diag-card">
+                        <summary>
+                            <span class="hc-adv-badge" id="hc-diag-badge">&#9432;</span>
+                            Circuit Diagnostics <span class="hc-adv-sub" id="hc-diag-sub">&mdash;design &amp;safety checks</span>
+                        </summary>
+                        <div class="hc-adv-body" id="hc-diag-body">
+                            <div class="hc-diag-empty">Add components to run circuit checks.</div>
+                        </div>
+                    </details>
+                    <!-- Fault injection -->
+                    <details class="hc-adv-card" id="hc-fault-card">
+                        <summary>
+                            <span class="hc-adv-badge">&#9888;</span>
+                            Fault Injection <span class="hc-adv-sub">&mdash;inject realistic failure modes</span>
+                        </summary>
+                        <div class="hc-adv-body">
+                            <div class="hc-fault-row">
+                                <label for="hc-fault-select" class="ctrl-label">Active fault</label>
+                                <select id="hc-fault-select">
+                                    <option value="none">None &mdash;normal operation</option>
+                                    <option value="pump-fail">Pump failure (pressure &rarr;0)</option>
+                                    <option value="leak">External pressure leak (&minus;50%)</option>
+                                    <option value="blocked-filter">Blocked filter (flow restriction)</option>
+                                    <option value="overheat">Oil overheating (viscosity drop)</option>
+                                    <option value="relief-stuck">Relief valve stuck closed</option>
+                                    <option value="cavitation">Pump cavitation (flow &minus;40%)</option>
+                                    <option value="air-ingress">Air ingress (spongy, slow response)</option>
+                                </select>
+                                <button class="btn btn-ghost" id="hc-fault-clear" type="button">Clear fault</button>
+                            </div>
+                            <div class="hc-fault-desc" id="hc-fault-desc">Select a fault to simulate real-world failure scenarios. The simulation must be running to see the effect.</div>
+                        </div>
+                    </details>
+                    <!-- Oscilloscope -->
+                    <details class="hc-adv-card" id="hc-scope-card">
+                        <summary>
+                            <span class="hc-adv-badge">&#128202;</span>
+                            Oscilloscope &amp;Data Logger <span class="hc-adv-sub">&mdash;multi-channel trace with CSV export</span>
+                        </summary>
+                        <div class="hc-adv-body">
+                            <div class="hc-scope-controls">
+                                <div class="hc-scope-chan">
+                                    <span class="hc-scope-dot" style="background:#00bcd4;"></span>
+                                    <label for="hc-scope-ch1">CH &thinsp;1</label>
+                                    <select id="hc-scope-ch1">
+                                        <option value="">&mdash;Select source &mdash;</option>
+                                    </select>
+                                </div>
+                                <div class="hc-scope-chan">
+                                    <span class="hc-scope-dot" style="background:#ffaa00;"></span>
+                                    <label for="hc-scope-ch2">CH &thinsp;2</label>
+                                    <select id="hc-scope-ch2">
+                                        <option value="">&mdash;Select source &mdash;</option>
+                                    </select>
+                                </div>
+                                <div class="hc-scope-chan">
+                                    <span class="hc-scope-dot" style="background:#3ddc84;"></span>
+                                    <label for="hc-scope-ch3">CH &thinsp;3</label>
+                                    <select id="hc-scope-ch3">
+                                        <option value="">&mdash;Select source &mdash;</option>
+                                    </select>
+                                </div>
+                                <div class="hc-scope-chan">
+                                    <span class="hc-scope-dot" style="background:#e64980;"></span>
+                                    <label for="hc-scope-ch4">CH &thinsp;4</label>
+                                    <select id="hc-scope-ch4">
+                                        <option value="">&mdash;Select source &mdash;</option>
+                                    </select>
+                                </div>
+                                <div class="hc-scope-actions">
+                                    <button class="btn btn-ghost" id="hc-scope-pause" type="button">&#10073;&#10073;Pause</button>
+                                    <button class="btn btn-ghost" id="hc-scope-clear" type="button">&#8634;Clear</button>
+                                    <button class="btn btn-ghost" id="hc-scope-csv" type="button">&#128190;CSV</button>
+                                    <button class="btn btn-ghost" id="hc-scope-png" type="button">&#128247;PNG</button>
+                                </div>
+                            </div>
+                            <canvas id="hc-scope-canvas" role="img" aria-label="Oscilloscope time-series chart of pressure and flow measurements"></canvas>
+                            <div class="hc-scope-legend" id="hc-scope-legend"></div>
+                        </div>
+                    </details>
+                </div>
+            </div>
+            <!-- ═══ Explore panels ══════════════════════════════════════ -->
+            <div class="controls-bar" id="cat-row" style="display:none;">
+                <span class="ctrl-label">Category</span>
+                <div class="pill-tabs" id="cat-tabs">
+                    <button class="pill active" data-cat="fundamentals">Fundamentals</button>
+                    <button class="pill" data-cat="components">Components</button>
+                    <button class="pill" data-cat="circuits">Circuits</button>
+                    <button class="pill" data-cat="applications">Applications</button>
+                </div>
+            </div>
+            <div class="item-selector" id="item-selector" style="display:none;">
+                <span class="ctrl-label">Select Concept</span>
+                <div class="is-grid" id="concept-grid"></div>
+            </div>
+            <div class="item-info" id="item-info" style="display:none;"></div>
+            <!-- ═══ Practice panel ══════════════════════════════════════ -->
+            <div class="practice-panel" id="practice-panel" style="display:none;">
+                <p class="pp-prompt" id="pp-prompt"></p>
+                <div class="pp-input-row">
+                    <input class="pp-input" id="pp-input" type="number" step="any" placeholder="Your answer">
+                    <span class="pp-unit" id="pp-unit"></span>
+                    <button class="btn btn-primary" id="pp-check">Check</button>
+                    <button class="btn btn-ghost" id="pp-next" style="display:none;">Next Problem &rarr;</button>
+                </div>
+                <div class="pp-bottom">
+                    <span class="feedback" id="pp-feedback"></span>
+                </div>
+                <div class="solution-panel" id="pp-solution" style="display:none;"></div>
+            </div>
+            <div class="practice-bar" id="practice-bar" style="display:none;">
+                <span class="ctrl-label">Practice</span>
+                <span class="pbar-score">
+                    Score: <span id="pbar-score-val">0 / 0</span>
+                </span>
+            </div>
+            <!-- ═══ Quiz panel ══════════════════════════════════════════ -->
+            <div class="question-panel" id="quiz-panel" style="display:none;"></div>
+            <div class="quiz-bar" id="quiz-bar" style="display:none;">
+                <div class="qbar-counter">
+                    <span class="qbar-q-label">Q</span>
+                    <span class="qbar-q-num" id="qbar-num">1</span>
+                    <span class="qbar-q-sep">/</span>
+                    <span class="qbar-q-total">5</span>
+                </div>
+            </div>
+           
+        <!-- Panel de Propiedades Avanzado -->
+
+        <!-- ── Scripts (ALL must have defer) ───────────────────────── -->
+        <script type="module" src="js/modules/index.js"></script>
+        <script type="module" src="js/app.js"></script>
+        
+    </body>
+</html>

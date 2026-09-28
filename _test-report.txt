@@ -1,0 +1,6 @@
+TITULO: 
+RESUMEN []: 
+NUM FALLOS: 0
+ERRORES DE CONSOLA: 0
+CONSOLA: [43312:3896:0928/110414.611:INFO:CONSOLE:114] "⚠️ Panel de propiedades no encontrado en el DOM", source: http://localhost:8123/js/modules/properties-panel.js (114)
+CONSOLA: [43312:3896:0928/110414.625:INFO:CONSOLE:114] "⚠️ Panel de propiedades no encontrado en el DOM", source: http://localhost:8123/js/modules/properties-panel.js (114)

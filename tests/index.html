@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cargando tests…</title>
+    <style>
+        :root { color-scheme: dark; }
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0d1117;
+            color: #c8d8e8;
+            font: 14px/1.5 system-ui, -apple-system, Segoe UI, sans-serif;
+        }
+        h1 { font-size: 1.1rem; margin: 0 0 4px; color: #00bcd4; }
+        p.hint { margin: 0 0 16px; color: #7f93ad; font-size: 0.85rem; }
+        .summary {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            background: #1b2532;
+            border: 1px solid #2a3a5a;
+        }
+        .summary.ok { color: #3ddc84; border-color: #2f6b45; }
+        .summary.ko { color: #ff6666; border-color: #6b2f2f; }
+        h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.6px; color: #88aacc; margin: 22px 0 6px; }
+        .case { font-family: ui-monospace, Consolas, monospace; font-size: 0.78rem; padding: 2px 0; }
+        .case.pass { color: #7fbf8f; }
+        .case.fail { color: #ff8888; }
+        .case.suite { color: #00bcd4; margin-top: 8px; font-weight: 700; }
+        #fatals {
+            display: none;
+            white-space: pre-wrap;
+            margin: 12px 0;
+            padding: 10px;
+            border-radius: 6px;
+            background: #2a1414;
+            border: 1px solid #6b2f2f;
+            color: #ffb3b3;
+            font-family: ui-monospace, Consolas, monospace;
+            font-size: 0.78rem;
+        }
+        .box { border: 1px solid #2a3a5a; border-radius: 8px; padding: 12px; background: #111823; }
+    </style>
+</head>
+<body>
+    <h1>Tests del nucleo de simulacion hidraulica</h1>
+    <p class="hint">
+        Servir con <code>python -m http.server 8123</code> y abrir
+        <code>http://localhost:8123/tests/index.html</code>.
+        Validacion sin Node: <code>chrome --headless=new --dump-dom &lt;url&gt;</code>.
+    </p>
+
+    <div id="summary" class="summary">Ejecutando…</div>
+
+    <div id="fatals"></div>
+
+    <h2>Fallos</h2>
+    <div id="failures" class="box"></div>
+
+    <h2>Detalle</h2>
+    <div id="results" class="box"></div>
+
+    <!-- Guarda de carga: detecta errores de modulo y cuelgues (util en headless) -->
+    <script>
+      (function () {
+        var fatals = [];
+        function show(msg) {
+          fatals.push(msg);
+          var el = document.getElementById('fatals');
+          if (el) { el.textContent = fatals.join('\n'); el.style.display = 'block'; }
+          document.title = 'FAIL (excepcion)';
+        }
+        window.addEventListener('error', function (e) {
+          show('Error de carga/ejecucion: ' + (e.message || e.error));
+        });
+        window.addEventListener('unhandledrejection', function (e) {
+          show('Promesa rechazada: ' + ((e.reason && e.reason.message) || e.reason));
+        });
+        setTimeout(function () {
+          var s = document.getElementById('summary');
+          if (s && s.textContent.indexOf('Ejecutando') >= 0) {
+            s.className = 'summary ko';
+            s.textContent = 'Los tests no terminaron (posible error de carga de modulos)';
+            document.title = 'FAIL (timeout)';
+          }
+        }, 8000);
+      })();
+    </script>
+    <script type="module" src="run-tests.js"></script>
+</body>
+</html>

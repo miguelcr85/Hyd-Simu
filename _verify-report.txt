@@ -1,0 +1,10 @@
+Verificando equivalencia 1:1 con el monolito previo a la extraccion...
+  OK    js/core/component-definitions.js
+  OK    js/core/simulation/graph.js
+  INFO  js/core/simulation/valve-routing.js (cambio intencionado en E2; lo verifica la suite de tests)
+  OK    js/core/simulation/dcv-positions.js
+  INFO  js/core/simulation/passthrough.js (cambio intencionado en E2; lo verifica la suite de tests)
+  INFO  js/core/simulation/solver.js (cambio intencionado en E2; lo verifica la suite de tests)
+
+RESULTADO: OK - los modulos sin cambios son identicos al monolito previo (equivalencia 1:1)
+           3 modulo(s) modificados intencionadamente en la etapa E2 (verificados por la suite de tests)
