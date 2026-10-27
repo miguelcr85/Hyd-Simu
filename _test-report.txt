@@ -1,30 +1,6 @@
-TITULO: PASS 337/337
-RESUMEN [summary ok]: TOTAL 337 | PASS 337 | FAIL 0 | 258 ms
+TITULO: 
+RESUMEN []: 
 NUM FALLOS: 0
-SUITE: — Catalogo — valores por defecto de los parametros
-SUITE: — Catalogo — puertos y geometria
-SUITE: — Valvulas direccionales (ruteo interno)
-SUITE: — Valvulas direccionales (posicion por comando externo)
-SUITE: — Passthrough — valvulas antirretorno
-SUITE: — Passthrough — valvulas de presion
-SUITE: — Passthrough — restricciones y control de caudal
-SUITE: — Passthrough — reparto, prioridad y medicion
-SUITE: — Solver — fuente de presion y alivio
-SUITE: — Solver — perdidas unificadas y componentes mult Puerto (etapa E2)
-SUITE: — Solver — valvula direccional + cilindro de doble efecto
-SUITE: — Solver — motores
-SUITE: — Smoke test — el solver procesa los 54 tipos del catalogo
-SUITE: — ComponentRegistry — catalogo completo y contrato
-SUITE: — Equivalencia con el motor anterior — conductividad por componente
-SUITE: — Equivalencia con el motor anterior — ruteo de valvulas
-SUITE: — Equivalencia con el motor anterior — posiciones por comando externo
-SUITE: — Unidades — etiquetas y decimales
-SUITE: — Unidades — conversion
-SUITE: — Unidades — formateo
-SUITE: — Panel educativo — cilindro de doble efecto
-SUITE: — Panel educativo — robustez
-SUITE: — Guia de componentes — documentacion completa
-SUITE: — Arquitectura — el nucleo no depende del navegador
-SUITE: — Arquitectura — la interfaz delega en el nucleo
-SUITE: — Arquitectura — coherencia entre catalogo y paleta
 ERRORES DE CONSOLA: 0
+CONSOLA: [38104:22356:1027/135341.280:INFO:CONSOLE:114] "⚠️ Panel de propiedades no encontrado en el DOM", source: http://localhost:8123/js/modules/properties-panel.js (114)
+CONSOLA: [38104:22356:1027/135341.295:INFO:CONSOLE:114] "⚠️ Panel de propiedades no encontrado en el DOM", source: http://localhost:8123/js/modules/properties-panel.js (114)

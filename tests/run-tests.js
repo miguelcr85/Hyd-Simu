@@ -23,6 +23,7 @@ import './cases/units.test.js';
 import './cases/component-docs.test.js';
 import './cases/component-docs-robust.test.js';
 import './cases/docs-coverage.test.js';
+import './cases/integration-powertrain.test.js';
 import './cases/architecture.test.js';
 
 const fatals = [];

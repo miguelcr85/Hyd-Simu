@@ -22,10 +22,13 @@ import { SYSTEMS, formatWithUnit, formatValue, convert, unitLabel } from '../cor
 const LIVE_METRICS = [
   { key: '_localPressure', label: 'Pressure at the component', kind: 'pressure' },
   { key: '_localFlow', label: 'Flow through the component', kind: 'flow' },
+  { key: '_inputPower', label: 'Mechanical power received', kind: 'power' },
+  { key: '_inputRPM', label: 'Input speed received', kind: 'rpm' },
   { key: '_forceKN', label: 'Effective force', kind: 'force' },
   { key: '_speedMMS', label: 'Piston speed', kind: 'speed' },
   { key: '_torque', label: 'Output torque', kind: 'torque' },
-  { key: '_rpm', label: 'Rotational speed', kind: 'rpm' }
+  { key: '_rpm', label: 'Rotational speed', kind: 'rpm' },
+  { key: '_power', label: 'Output power', kind: 'power' }
 ];
 
 function esc(text) {
@@ -203,7 +206,11 @@ export function componentDocsHtml(input) {
   const definition = source.definition || {};
   const spec = source.spec || null;
   const comp = source.comp || null;
-  const vm = source.vm || {};
+  /* Copia del view-model: nunca se muta el objeto del llamador. Si el llamador
+     no enlazo el componente, se enlaza aqui para que las formulas puedan leer
+     sus valores medidos. */
+  const vm = Object.assign({}, source.vm || {});
+  if (comp && !vm.comp) vm.comp = comp;
   const system = vm.system || SYSTEMS.SI;
   const docs = (spec && spec.docs) || null;
 

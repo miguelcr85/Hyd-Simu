@@ -77,6 +77,28 @@ function pumpEquations(vm, opts) {
       notes: 'This is why a pump left dumping heats the oil so quickly.'
     });
   }
+
+  /* Diagnostico: una bomba de desplazamiento variable debe estar enchufada a un
+     pump-drive (puerto IN). Si no lo esta, el modelo usa la entrada por defecto. */
+  if (comp.type === 'pump-var-displacement') {
+    const source = String(comp._sourceType || '');
+    if (source.indexOf('pump-drive') !== 0) {
+      out.push({
+        title: 'Mechanical input — not connected',
+        formula: 'P_in = 46 kW · n_in = 1500 rpm (default)',
+        where: 'This pump is not fed by a pump drive in the circuit',
+        notes: 'Connect the pump IN port (left side) to an output of the pump drive (OUT1…OUT3) so that the real speed and power are used.'
+      });
+    } else {
+      out.push({
+        title: 'Mechanical input received',
+        formula: 'P_in = output power of the pump drive · n_in = output speed',
+        where: 'Origin: ' + source,
+        result: vm.fmtU('power', comp._inputPower || 0) + ' at ' + vm.fmtU('rpm', comp._inputRPM || 0)
+      });
+    }
+  }
+
   return out;
 }
 

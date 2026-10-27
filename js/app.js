@@ -6859,7 +6859,11 @@ function updatePerformanceInfo(comp) {
 
   function validateCircuit() {
     var warns = [];
-    var hasPump = components.some(function (c) { return c.type === 'pump' || c.type === 'pump-var-displacement'; });
+    /* Cualquier fuente hidraulica cuenta como unidad de potencia */
+    var hasPump = components.some(function (c) {
+      return c.type === 'pump' || c.type === 'pump-var' ||
+             c.type === 'pump-var-displacement' || c.type === 'pump-hand';
+    });
     if (!hasPump) warns.push('\u26A0 No hydraulic power unit found. Every circuit needs a pump.');
 
     var hasActuator = components.some(function (c) {
@@ -6888,6 +6892,32 @@ function updatePerformanceInfo(comp) {
       });
     });
     if (unconnected > 0) warns.push('\u26A0 ' + unconnected + ' unconnected port(s). Connect all ports for proper flow.');
+
+    /* ── Avisos especificos de la cadena de potencia ─────────────────────
+       Dicen QUE conectar, no solo cuantos puertos faltan. */
+    components.forEach(function (comp) {
+      var isPortConnected = function (idx) { return !!connectedPorts[comp.id + ':' + idx]; };
+      if (comp.type === 'pump-var-displacement' && !isPortConnected(2)) {
+        warns.push('\u26A0 Variable pump #' + comp.id + ' has no RPM input: connect its IN port (left side) ' +
+          'to an output of the pump drive (OUT1-OUT3) or the simulation will use the default 46 kW / 1500 rpm.');
+      }
+      if (comp.type === 'poclain-ms35' && !isPortConnected(1)) {
+        warns.push('\u26A0 LSHT motor #' + comp.id + ' has no return line: connect port B to the tank ' +
+          'so that the oil can circulate.');
+      }
+      if (comp.type === 'pump-drive') {
+        if (!isPortConnected(0)) {
+          warns.push('\u26A0 Pump drive #' + comp.id + ' has no input: connect its IN port to the engine ' +
+            '(it will otherwise use 46 kW / 1500 rpm by default).');
+        }
+        var outs = parseInt(comp.values.numOutputs || '2', 10);
+        for (var o = 1; o <= outs; o++) {
+          if (!isPortConnected(o)) {
+            warns.push('\u26A0 Pump drive #' + comp.id + ': output OUT' + o + ' is not connected to a pump.');
+          }
+        }
+      }
+    });
 
     return warns;
   }

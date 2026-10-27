@@ -312,6 +312,38 @@ export function solveCircuit(circuit) {
     });
     
     // ============================================================
+    // PASO 4.5: Calcular TODAS las bombas de desplazamiento variable
+    // ============================================================
+    // Las que cuelgan de un pump-drive ya se calcularon en el PASO 4 con su RPM
+    // y su potencia reales; al recorrerlas de nuevo se recalculan con esos mismos
+    // valores (resultado identico). Las que NO tienen pump-drive reciben la
+    // entrada por defecto (46 kW · 1500 rpm) en lugar de quedarse a 0, que era lo
+    // que dejaba el circuito sin presion, sin caudal y sin calculos.
+    components.forEach(function (c) {
+        if (c.type !== 'pump-var-displacement') return;
+        calculateVariablePump(c, adj);
+    });
+
+    // ============================================================
+    // PASO 4.6: Bombas variables de dos puertos ('pump-var')
+    // ============================================================
+    // Modelo simple y coherente con sus parametros (presion maxima y caudal
+    // maximo escalado por el % de desplazamiento). Este tipo no se calculaba en
+    // ninguna fase, por lo que siempre entregaba 0 bar / 0 L/min.
+    components.forEach(function (c) {
+        if (c.type !== 'pump-var') return;
+        var varMaxP = c.values.maxPressure || 250;
+        var varMaxQ = c.values.maxFlow || 60;
+        var varPct = (c.values.displacement !== undefined ? c.values.displacement : 100) / 100;
+        c._theoreticalFlow = varMaxQ;
+        c._actualFlow = varMaxQ * varPct;
+        c._pressure = varMaxP;
+        c._localPressure = varMaxP;
+        c._localFlow = c._actualFlow;
+        c._hydraulicPower = varMaxP * c._actualFlow / 600;
+    });
+    
+    // ============================================================
     // PASO 5: Función para calcular bomba variable
     // ============================================================
     function calculateVariablePump(c, adj) {

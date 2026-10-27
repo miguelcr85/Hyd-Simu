@@ -40,6 +40,9 @@ comportamiento y para decidir, más adelante, qué corregir.
 | Velocidad del cilindro | `v [mm/s] = Q [L/min] × 1e6 / 60 / A [mm²]`; animación con `factor = Q / 30 × 0,8` |
 | Par del motor | `T = P × V / (20π)`; `n = Q × 1000 / V` |
 | Par del motor LSHT Poclain | `T = min(P×V/20π, Tmax) × ηmec`; `n = min(Q×1000/V × ηvol, nMax)` |
+| Bomba variable (2 puertos) | `Q = maxFlow × (desplazamiento % / 100)`; `p = maxPressure` |
+| Bomba de desplazamiento variable | `Q = V × (desplazamiento %) × n × ηvol / 1000`; `p = maxPressure`; sin pump-drive usa **46 kW · 1500 rpm** |
+| Transmisión (pump drive) | `n_out = n_in × ratio`; `P_out = P_in × (ratio/Σratios) × η`; derating por límites de par y velocidad |
 | Histéresis alivio / secuencia | 92 % / 85 % del ajuste |
 
 > Las pérdidas son ahora **un único modelo** (las que declara cada componente en su spec),
@@ -60,6 +63,8 @@ decisión explícita antes de corregirse.
 | D6 | Se perdió el cambio de unidades métrico/imperial (`UNIT_DEFS`, `convDisp`) | ✅ **restaurada**: selector SI/Imperial en la barra superior; convierte readouts, etiquetas del canvas, panel de propiedades y guía de componentes (recordado en `localStorage`) | `units.test.js`, `component-docs.test.js` |
 | D7 | El motor no propaga caudal al puerto de retorno | ⏳ explícito: `physics.noConduction` en `motor`/`motor-bidir`; para corregirlo basta quitarlo | `registry-equivalence.test.js` |
 | D8 | El panel de propiedades "avanzado" (`js/modules/*`) es inalcanzable | ⏳ pendiente (E5) | — |
+| D9 | `pump-var` (Variable Pump, 2 puertos) no se calculaba en ninguna fase y `pump-var-displacement` solo se calculaba si colgaba de un pump-drive | ✅ **corregida**: todas las bombas variables se calculan (con los valores del drive o con la entrada por defecto 46 kW / 1500 rpm) y la guía avisa si falta la entrada mecánica | `integration-powertrain.test.js` |
+| D10 | La validación solo reconocía `pump` y `pump-var-displacement` como unidad de potencia | ✅ **corregida**: `pump-var` y `pump-hand` también cuentan; se añaden avisos concretos (bomba sin RPM, MS35 sin retorno, salidas del drive sin uso) | — (UI) |
 
 > Al corregir D1–D4 cambian resultados visibles del simulador (era el objetivo acordado):
 > p. ej. con bomba de 150 bar y alivio de 120 bar ahora la línea trabaja a 120 bar, y un
