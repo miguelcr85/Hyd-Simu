@@ -43,6 +43,7 @@ comportamiento y para decidir, más adelante, qué corregir.
 | Bomba variable (2 puertos) | `Q = maxFlow × (desplazamiento % / 100)`; `p = maxPressure` |
 | Bomba de desplazamiento variable | `Q = V × (desplazamiento %) × n × ηvol / 1000`; `p = maxPressure`; sin pump-drive usa **46 kW · 1500 rpm** |
 | Transmisión (pump drive) | `n_out = n_in × ratio`; `P_out = P_in × (ratio/Σratios) × η`; derating por límites de par y velocidad |
+| Línea de succión de la bomba (puerto T) | `Q_succión = Q_entregado`; presión ≈ 1 bar; el aceite **entra** a la bomba por T |
 | Histéresis alivio / secuencia | 92 % / 85 % del ajuste |
 
 > Las pérdidas son ahora **un único modelo** (las que declara cada componente en su spec),
@@ -65,6 +66,7 @@ decisión explícita antes de corregirse.
 | D8 | El panel de propiedades "avanzado" (`js/modules/*`) es inalcanzable | ⏳ pendiente (E5) | — |
 | D9 | `pump-var` (Variable Pump, 2 puertos) no se calculaba en ninguna fase y `pump-var-displacement` solo se calculaba si colgaba de un pump-drive | ✅ **corregida**: todas las bombas variables se calculan (con los valores del drive o con la entrada por defecto 46 kW / 1500 rpm) y la guía avisa si falta la entrada mecánica | `integration-powertrain.test.js` |
 | D10 | La validación solo reconocía `pump` y `pump-var-displacement` como unidad de potencia | ✅ **corregida**: `pump-var` y `pump-hand` también cuentan; se añaden avisos concretos (bomba sin RPM, MS35 sin retorno, salidas del drive sin uso) | — (UI) |
+| D11 | La línea de tanque de la bomba se modelaba como **fuga del 8 %** con la dirección visual fija (`flowDir = -1`), así que el aceite parecía salir del puerto T y la animación podía quedar invertida según cómo se dibujara la conexión | ✅ **corregida**: el puerto T es la **succión** (`Q = caudal entregado`, ≈1 bar) y la dirección se calcula según la orientación de la conexión, de modo que el aceite siempre **entra** a la bomba | `solver-source.test.js` (línea de succión) |
 
 > Al corregir D1–D4 cambian resultados visibles del simulador (era el objetivo acordado):
 > p. ej. con bomba de 150 bar y alivio de 120 bar ahora la línea trabaja a 120 bar, y un

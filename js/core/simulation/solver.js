@@ -341,6 +341,8 @@ export function solveCircuit(circuit) {
         c._localPressure = varMaxP;
         c._localFlow = c._actualFlow;
         c._hydraulicPower = varMaxP * c._actualFlow / 600;
+        /* Succion desde el tanque por el puerto T */
+        writeSuctionLine(c, c._actualFlow);
     });
     
     // ============================================================
@@ -426,21 +428,34 @@ export function solveCircuit(circuit) {
             });
         }
         
-        // Propagar al puerto T (retorno)
-        var tankKey = c.id + ':1';
-        if (adj && adj[tankKey]) {
-            adj[tankKey].forEach(function (a) {
-                var cn = connections[a.connIdx];
-                if (cn) {
-                    cn.pressure = 2;
-                    cn.flow = actualFlow * (1 - effVol);
-                    cn.rpm = 0;
-                    cn.power = 0;
-                    cn.torque = 0;
-                    cn.flowDir = -1;
-                }
-            });
-        }
+        // Succion: la bomba toma del tanque el mismo caudal que entrega por P.
+        // (Antes se escribia el 8 % de fuga con una direccion fija, que ademas
+        //  podia quedar al reves segun como se dibujara la conexion.)
+        writeSuctionLine(c, actualFlow);
+    }
+
+    /**
+     * Escribe la linea de succion (puerto T) de una bomba.
+     *
+     * La bomba aspira del tanque el mismo caudal que entrega por P, por lo que
+     * el aceite ENTRA a la bomba por T. La direccion visual de las particulas se
+     * calcula segun como este dibujada la conexion: si se dibujo desde el puerto
+     * T hacia el tanque hay que invertir el sentido.
+     */
+    function writeSuctionLine(pump, flow) {
+        var tankKey = pump.id + ':1';
+        if (!adj[tankKey]) return;
+        adj[tankKey].forEach(function (a) {
+            var cn = connections[a.connIdx];
+            if (!cn) return;
+            cn.pressure = 1;              /* succion: practicamente atmosferica */
+            cn.flow = flow;
+            cn.rpm = 0;
+            cn.power = 0;
+            cn.torque = 0;
+            var fromPumpTankPort = (cn.from.compId === pump.id && cn.from.portIdx === 1);
+            cn.flowDir = fromPumpTankPort ? -1 : 1;
+        });
     }
     
     // ============================================================
@@ -455,6 +470,8 @@ export function solveCircuit(circuit) {
         p._actualFlow = p.values.flow || 30;
         p._localPressure = p._pressure;
         p._localFlow = p._actualFlow;
+        /* El aceite que entrega por P lo aspira del tanque por T */
+        writeSuctionLine(p, p._actualFlow);
     });
     
     // ============================================================

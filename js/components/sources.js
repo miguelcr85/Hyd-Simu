@@ -68,6 +68,15 @@ function pumpEquations(vm, opts) {
     notes: 'This is the torque the engine or the PTO must supply to the pump.'
   }];
 
+  /* La bomba aspira del tanque (puerto T) el mismo caudal que entrega por P */
+  out.push({
+    title: 'Suction line (port T)',
+    formula: 'Q_suction = Q_delivered',
+    where: 'The pump takes from the tank exactly the flow it delivers to the circuit',
+    substitution: 'Q_suction = ' + vm.fmtU('flow', actual),
+    notes: 'The oil moves FROM the tank INTO the pump through port T, so the particles enter the pump.'
+  });
+
   if (o.dissipated) {
     out.push({
       title: 'Power turned into heat when the relief valve dumps',

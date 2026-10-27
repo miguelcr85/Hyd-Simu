@@ -97,6 +97,70 @@ describe('Solver — fuente de presion y alivio', function () {
   });
 });
 
+describe('Solver — linea de succion de las bombas (puerto T)', function () {
+
+  it('la bomba aspira del tanque el caudal que entrega y el aceite ENTRA por T', function () {
+    const c = buildCircuit({
+      comps: [
+        ['pump', 1, { pressure: 150, flow: 30 }],
+        ['reservoir', 2]
+      ],
+      /* Conexion dibujada desde el puerto T de la bomba hacia el deposito */
+      links: [[1, 0, 2, 0], [1, 1, 2, 0]]
+    });
+    solve(c);
+    const succion = linkBetween(c, 1, 1, 2, 0);
+    expect(succion.flow).toBeCloseTo(30);          /* todo el caudal de la bomba */
+    expect(succion.pressure).toBeLessThan(5);      /* succion: casi atmosferica */
+    /* flowDir -1 = de "to" hacia "from" = del deposito hacia la bomba */
+    expect(succion.flowDir).toBe(-1);
+  });
+
+  it('la direccion se invierte si la conexion se dibujo al reves', function () {
+    const c = buildCircuit({
+      comps: [
+        ['pump', 1, { pressure: 150, flow: 30 }],
+        ['reservoir', 2]
+      ],
+      /* Conexion dibujada desde el deposito hacia el puerto T */
+      links: [[1, 0, 2, 0], [2, 0, 1, 1]]
+    });
+    solve(c);
+    const succion = linkBetween(c, 1, 1, 2, 0);
+    expect(succion.flowDir).toBe(1);               /* del deposito (from) a la bomba (to) */
+  });
+
+  it('la bomba variable tambien aspira por T todo su caudal', function () {
+    const c = buildCircuit({
+      comps: [
+        ['pump-var-displacement', 1, { displacement: 90 }],
+        ['reservoir', 2]
+      ],
+      links: [[1, 0, 2, 0], [1, 1, 2, 0]]
+    });
+    solve(c);
+    const bomba = comp(c, 1);
+    const succion = linkBetween(c, 1, 1, 2, 0);
+    expect(succion.flow).toBeCloseTo(bomba._actualFlow);
+    expect(succion.pressure).toBeLessThan(5);
+    expect(succion.flowDir).toBe(-1);
+  });
+
+  it('la succion no altera la presion de sistema', function () {
+    const c = buildCircuit({
+      comps: [
+        ['pump', 1, { pressure: 150, flow: 30 }],
+        ['relief', 2, { setting: 120 }],
+        ['reservoir', 3]
+      ],
+      links: [[1, 0, 2, 0], [1, 1, 3, 0], [2, 1, 3, 0]]
+    });
+    const r = solve(c);
+    expect(r.systemPressure).toBeCloseTo(120);
+    expect(linkBetween(c, 1, 1, 3, 0).pressure).toBe(1);
+  });
+});
+
 describe('Solver — perdidas unificadas y componentes mult Puerto (etapa E2)', function () {
 
   it('[D4 corregida] filtro: 1 bar de perdida segun la tabla de reglas', function () {
